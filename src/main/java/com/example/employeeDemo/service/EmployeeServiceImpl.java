@@ -1,42 +1,52 @@
 package com.example.employeeDemo.service;
 
-import com.example.employeeDemo.dao.EmployeeDao;
+
 import com.example.employeeDemo.entity.Employee;
+import com.example.employeeDemo.repositories.EmployeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
-public class EmployeeServiceImpl implements EmployeeService{
-    private final EmployeeDao employeeDao;
+public class EmployeeServiceImpl {
+    @Autowired
+    private final EmployeeRepository employeeRepository;
 
-    public EmployeeServiceImpl(EmployeeDao theEmployeeDao){
-        employeeDao = theEmployeeDao;
-
-
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
     }
 
-    @Transactional
-    @Override
-    public Employee findById(int theId) {
-        return employeeDao.findById(theId);
+
+    public Optional<Employee> findById(int theId) {
+        return employeeRepository.findById(theId);
     }
 
-    @Transactional
-    @Override
+
     public Employee saveEmployee(Employee theEmployee) {
-        return employeeDao.saveEmployee(theEmployee);
+        return employeeRepository.save(theEmployee);
     }
 
-    @Transactional
-    @Override
+    public Employee updateEmployee(Employee theEmployee,int id){
+        return employeeRepository.findById(id).map(
+                employee -> {
+                employee.setFirstname(employee.getFirstname());
+                employee.setLastName(employee.getLastName());
+                employee.setEmail(employee.getEmail());
+               return employeeRepository.save(theEmployee);
+
+                }).orElseThrow(()-> new RuntimeException("couldn't find the employee in table"));
+    }
+
+
     public void deleteById(int theId) {
-        employeeDao.deleteById(theId);
+        employeeRepository.deleteById(theId);
 
     }
 
-    @Override
+
     public List<Employee> findAll() {
-        return employeeDao.findAll();
+        return employeeRepository.findAll();
     }
 }

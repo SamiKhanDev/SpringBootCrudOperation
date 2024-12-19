@@ -5,13 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "employees")
 public class Employee {
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +17,14 @@ public class Employee {
     private String lastName;
     @Column(name = "email")
     private String email;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getFirstname() {
         return firstname;

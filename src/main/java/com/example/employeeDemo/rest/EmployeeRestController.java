@@ -1,33 +1,40 @@
 package com.example.employeeDemo.rest;
 
 import com.example.employeeDemo.entity.Employee;
-import com.example.employeeDemo.service.EmployeeService;
+import com.example.employeeDemo.service.EmployeeServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/employees")
 public class EmployeeRestController {
-    private final EmployeeService employeeService;
     @Autowired
-    public EmployeeRestController (EmployeeService theEmployeeService){
-       employeeService = theEmployeeService;
-    }
-    @GetMapping("/employees")
+    private EmployeeServiceImpl employeeServiceImpl;
+
+    @GetMapping
     public List<Employee> findAll(){
-        return employeeService.findAll();
+        return employeeServiceImpl.findAll();
     }
-    @GetMapping("/employees/{employeeId}")
+    @GetMapping("/{employeeId}")
     public Employee getEmployee(@PathVariable int employeeId){
-        Employee theEmployee = employeeService.findById(employeeId);
-        if (theEmployee==null){
-            throw new RuntimeException("employee id was not found"+ employeeId);
-        }
-        return theEmployee;
+        Optional<Employee> theEmployee = employeeServiceImpl.findById(employeeId);
+        throw new RuntimeException("employee id was not found" + employeeId);
+    }
+
+    @PostMapping()
+    public Employee saveEmployee (@RequestBody Employee employee){
+        return employeeServiceImpl.saveEmployee(employee);
+
+    }
+    @PutMapping("/{Id}")
+    public Employee updateEmployee(@PathVariable int Id, @RequestBody Employee updateEmployee){
+        return employeeServiceImpl.updateEmployee(updateEmployee, Id);
+    }
+    @DeleteMapping("/{Id}")
+    public void deleteEmployee(@PathVariable int Id){
+        employeeServiceImpl.deleteById(Id);
     }
 }
